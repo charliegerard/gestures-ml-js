@@ -2,6 +2,8 @@ const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
 var daydream = require('daydream-node')();
 
+const robot = require('robotjs');
+
 let liveData = [];
 let predictionDone = false;
 
@@ -40,6 +42,18 @@ const predict = (model, newSampleData) => {
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
     
         console.log("GESTURE: ", winner);
+
+        switch(winner){
+            case 'hadoken':
+                robot.typeString('s');
+                break;
+            case 'punch':
+                robot.typeString('a');
+                break;
+            case 'uppercut':
+                robot.typeString('d');
+                break;
+        }
     });
 }
 
