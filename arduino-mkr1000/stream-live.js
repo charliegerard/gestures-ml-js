@@ -14,24 +14,21 @@ board.on("ready", function() {
     console.log("Board ready!");
     let data = "";
 
-    var acc = new five.Accelerometer({
-        controller: "MPU6050",
-        sensitivity: 16384 // optional
-    });
-
-    var gyro = new five.Gyro({
+    var imu = new five.IMU({
+        pins: [11,12], // connect SDA to 11 and SCL to 12
         controller: "MPU6050"
-    });   
-
-    acc.on('change', function(){
-        data.concat(`${this.x} ${this.y} ${this.z}`);
     });
 
-    gyro.on("change", function() {
-        data.concat(`${this.x} ${this.y} ${this.z}`);
+    imu.on("change", function() {
+        data = `START ${this.accelerometer.x} 
+            ${this.accelerometer.y} 
+            ${this.accelerometer.z} 
+            ${this.gyro.x}
+            ${this.gyro.y} 
+            ${this.gyro.z} END`;
+            
+        console.log("ALL DATA: ", data);
     });
-
-    console.log("ALL DATA: ", data);
 });
 
 board.on("close", function() {
