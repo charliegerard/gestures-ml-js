@@ -172,7 +172,9 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
   
   let newSampleData = await newData();
 
-  // predict(model, newSampleData);
+  console.log(xTest)
+
+  predict(model, newSampleData);
   // await model.save('file://model-1');
   return model;
 }

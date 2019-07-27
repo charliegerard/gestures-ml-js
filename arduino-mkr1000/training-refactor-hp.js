@@ -3,7 +3,8 @@ const lineReader = require("line-reader");
 const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
 
-const gestureClasses = ["cross", "square", "triangle"];
+const gestureClasses = ["alohomora", "expelliarmus"];
+// const gestureClasses = ["cross", "square", "triangle"];
 let justFeatures = [];
 let justLabels = [];
 let numClasses = gestureClasses.length;
@@ -12,7 +13,7 @@ function read(filename) {
     const data = [];
     return new Promise((resolve, reject) => {
         // read each line of each file and return object with label and features
-        lineReader.eachLine(`data/gestureData/${filename}`, function (line) {
+        lineReader.eachLine(`data/arduino/${filename}`, function (line) {
             // Remove 'START' and 'END'
             const truncatedLine = line.substr(line.indexOf('START ') + 6, line.indexOf('END') - 7);
             // Convert string line to line of float values
@@ -23,7 +24,7 @@ function read(filename) {
             const concatArray = data.reduce((acc, val) => acc.concat(val), []);
 
             // To make sure the data has the same format everywhere, we only take the 300 first values
-            if (concatArray.length === 300) { // 300 is 6 values per line for 50 lines
+            if (concatArray.length === 882) { // 6 values per line for 147 lines
                 let trimmedLabel = filename.split("_")[1];
                 let trimmedLabelIndex;
                 gestureClasses.map((gesture, index) =>
@@ -37,7 +38,7 @@ function read(filename) {
 
 function getFilenames() {
     return new Promise((resolve, reject) => {
-        fs.readdir(`data/gestureData`, "utf8", (err, data) =>
+        fs.readdir(`data/arduino`, "utf8", (err, data) =>
             err ? reject(err) : resolve(data)
         );
     });
@@ -129,7 +130,7 @@ const createModel = async (xTrain, yTrain, xTest, yTest) => {
     const model = tf.sequential();
     model.add(tf.layers.dense(
         { units: 10, activation: 'sigmoid', inputShape: [xTrain.shape[1]] }));
-    model.add(tf.layers.dense({ units: gestureClasses.length, activation: 'softmax' }));
+    model.add(tf.layers.dense({ units: numClasses, activation: 'softmax' }));
     model.summary();
 
     const optimizer = tf.train.adam(params.learningRate);
@@ -144,18 +145,16 @@ const createModel = async (xTrain, yTrain, xTest, yTest) => {
     await model.fit(xTrain, yTrain, {
         epochs: params.epochs,
         validationData: [xTest, yTest],
-        // callbacks: {
-        //     onEpochEnd: async (epoch, logs) => {
-        //         // Plot the loss and accuracy values at the end of every training epoch.
-        //         // trainLogs.push(logs);
-        //     },
-        // }
+        callbacks: {
+            onEpochEnd: async (epoch, logs) => {
+                // Plot the loss and accuracy values at the end of every training epoch.
+                trainLogs.push(logs);
+            },
+        }
     });
-    // await model.save('file://model-game');
+    await model.save('file://model-hp');
     return model;
 }
-
-let formattedArray;
 
 (async () => {
     // get all filenames in data folder
@@ -166,15 +165,8 @@ let formattedArray;
         return originalContent;
     });
     const gesturesData = await Promise.all(allData);
-    // console.log(gesturesData.length) // should be 25 * 3 === 75
-    // console.log(gesturesData[0].features.length) // should be 300
 
     const formattedArray = format(gesturesData);
-    // console.log(formattedArray.justLabels.length); // 3 for 3 gestures
-    // console.log(formattedArray.justLabels[0].length); // should be 25 for 25 files
-    // console.log(formattedArray.justFeatures.length); // should be 3
-    // console.log(formattedArray.justFeatures[0].length); // should be 25 for 25 files
-
     const model = await createModel(formattedArray[0], formattedArray[1], formattedArray[2], formattedArray[3]);
 
     const prediction = model.predict(formattedArray[0]);
