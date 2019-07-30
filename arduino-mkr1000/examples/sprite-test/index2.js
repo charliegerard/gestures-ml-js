@@ -20,8 +20,6 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
         canvasX, canvasY, scaledWidth, scaledHeight);
 }
 
-const init = () => window.requestAnimationFrame(gameLoop);
-
 let cycleLoop;
 let currentLoopIndex = 0;
 let frameCount = 0;
@@ -38,83 +36,105 @@ let positionX = 0;
 let fireballPosition = positionX;
 let positionY = 0;
 const FRAME_LIMIT = 8;
-let keyPresses = {};
 
-window.addEventListener('keydown', e => keyPresses[e.key] = true);
-window.addEventListener('keyup', e => keyPresses[e.key] = false);
+// const init = () => window.requestAnimationFrame(gameLoop);
+const init = () => gameLoop();
 
+let hasMoved = false;
+
+window.addEventListener('keydown', e => {
+    switch(e.key){
+        case 'p':
+            currentDirection = 2;
+            hasMoved = true;
+            stopDefaultAnimation();
+            playAnimation();
+            break;
+        case 'ArrowLeft':
+            positionX -= MOVEMENT_SPEED;
+            currentDirection = 3;
+            hasMoved = true;
+            break;
+        case 'ArrowRight':
+            positionX += MOVEMENT_SPEED;
+            currentDirection = 3;
+            hasMoved = true;
+            break;
+        case 'h':
+            currentDirection = 0;
+            hasMoved = true;
+            break;
+        case 'a':
+            currentDirection = 4;
+            fireballPosition += 35;
+            hasMoved = true;
+            break;
+        default: 
+            currentDirection = 1;
+            hasMoved = false;
+            break;
+    }
+});
+
+// window.addEventListener('keyup', e => keyPresses[e.key] = false);
 function gameLoop(){
-    frameCount++;
-    if (frameCount < FRAME_LIMIT) {
-        window.requestAnimationFrame(gameLoop);
-        return;
+    switch(currentMovement.index){
+        case 0 || 1 || 5:
+            cycleLoop = [0,1,2,3];
+            break;
+        case 2:
+            cycleLoop = [0,1,2];
+            break;
+        case 3:
+            cycleLoop = [0,1,2,3,4];
+            break;
+        case 4:
+            cycleLoop = [0,1];
+            break;
+        default:
+            break;
     }
-    frameCount = 0;
 
+    playDefaultAnimation();
+}
+
+let defaultAnim;
+let anim;
+
+const playDefaultAnimation = () => {
+    let cycleLoop = [0,1,2,3];
+    defaultAnim = window.requestAnimationFrame(playDefaultAnimation);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let hasMoved = false;
+    drawFrame(cycleLoop[currentLoopIndex],1,positionX, canvas.height - (scaledHeight + 30));
 
-    if (keyPresses.ArrowLeft) {
-        positionX -= MOVEMENT_SPEED;
-        currentDirection = 3;
-        hasMoved = true;
-    } else if (keyPresses.ArrowRight) {
-        positionX += MOVEMENT_SPEED;
-        currentDirection = 3;
-        hasMoved = true;
-    } else if (keyPresses.p) {
-        currentDirection = 2;
-        hasMoved = true;
-    } else if (keyPresses.h) {
-        currentDirection = 0;
-        hasMoved = true;
-    } else if (keyPresses.a) {
-        currentDirection = 4;
-        fireballPosition += 35;
-        hasMoved = true;
-    }
-
-    if(currentDirection === 0 || currentDirection === 1){
-        positionX = positionX;
-        cycleLoop = [0,1,2,3];
-    } else if(currentDirection === 2){
-        positionX = positionX;
-        cycleLoop = [0, 1, 2];
-    } else if(currentDirection === 3){
-        cycleLoop = [0,1,2,3,4];
-    } else if(currentDirection === 4){
-        cycleLoop = [0,1];
-    } else if(currentDirection === 5){
-        cycleLoop = [0,1,2,3];
-    }
-
-    // drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
-
+    frameCount++;
+    if(frameCount % 8 === 0){
         currentLoopIndex++;
-        if (currentLoopIndex >= cycleLoop.length) {
-            if(currentDirection === 4){
-                currentDirection = 5;
-            }
-           currentLoopIndex = 0;
-        //    drawFrame(cycleLoop[currentLoopIndex],1,positionX, canvas.height - (scaledHeight + 30));
-        //    currentDirection = 1;
-        }
 
-    if(currentDirection === 4){
-        drawFrame(cycleLoop[currentLoopIndex],currentDirection,fireballPosition, canvas.height - (scaledHeight + 30));
-    } else {
-        drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
+        if(currentLoopIndex >= cycleLoop.length){
+            currentLoopIndex = 0;
+        }  
     }
+}
 
-    // currentLoopIndex++;
-    // if (currentLoopIndex >= cycleLoop.length) {
-    //     if(currentDirection === 4){
-    //         currentDirection = 5;
-    //     }
-    //    currentLoopIndex = 0;
-    // //    drawFrame(cycleLoop[currentLoopIndex],1,positionX, canvas.height - (scaledHeight + 30));
-    // //    currentDirection = 1;
-    // }
+const stopDefaultAnimation = () => window.cancelAnimationFrame(defaultAnim);
+const stopAnimation = (animation) => window.cancelAnimationFrame(animation);
 
-    window.requestAnimationFrame(gameLoop)
+const playAnimation = () => {
+    cycleLoop = [0,1,2];
+    anim = window.requestAnimationFrame(playAnimation);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
+
+    frameCount++;
+    if(frameCount % 8 === 0){
+        currentLoopIndex++;
+
+        if(currentLoopIndex >= cycleLoop.length){
+            currentLoopIndex = 0;
+            stopAnimation(anim)
+            playDefaultAnimation();
+        }  
+    }
 }
