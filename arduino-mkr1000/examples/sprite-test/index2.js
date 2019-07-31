@@ -33,7 +33,7 @@ let currentDirection = 1; //standing
 
 const MOVEMENT_SPEED = 6;
 let positionX = 0;
-let fireballPosition = positionX;
+let fireballPosition = positionX + width;
 let positionY = 0;
 const FRAME_LIMIT = 8;
 
@@ -73,10 +73,12 @@ window.addEventListener('keydown', e => {
             break;
         case 'a':
             currentDirection = 4;
-            fireballPosition += 35;
+            // fireballPosition += 35;
             hasMoved = true;
             cycleLoop = [0, 1];
             playAnimation();
+
+            triggerFireball();
             break;
         default: 
             currentDirection = 1;
@@ -161,6 +163,16 @@ const playAnimation = () => {
 
     drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
 
+    if(currentDirection === 0){ //hadouken
+        let fireballCycleLoop = [0,1];
+
+        drawFrame(fireballCycleLoop[currentLoopIndex],4,fireballPosition+=15, canvas.height - (scaledHeight + 30));
+
+        if(currentLoopIndex >= fireballCycleLoop.length){
+            fireballPosition = positionX + width;
+        }
+    }
+
     frameCount++;
     if(frameCount % 8 === 0){
         currentLoopIndex++;
@@ -174,5 +186,8 @@ const playAnimation = () => {
     }
 }
 
+const triggerFireball = () => {
+    drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
+}
 
 // if standing and key pressed, don't wait til end of cycleloop.
