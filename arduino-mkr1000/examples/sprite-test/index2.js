@@ -2,15 +2,19 @@ let img = new Image();
 img.src = 'images/ken.png';
 img.onload = () => init();
 
+let enemy = new Image();
+enemy.src = 'images/guile.png';
+
 let canvas = document.querySelector('canvas');
 canvas.width = document.body.clientWidth; //document.width is obsolete
 canvas.height = document.body.clientHeight; //document.height is obsolete
 
 let ctx = canvas.getContext('2d');
 
-const scale = 2;
+const scale = 4;
 const width = 70;
 const height = 80;
+const enemyHeight = 90;
 const scaledWidth = scale * width;
 const scaledHeight = scale * height;
 
@@ -22,7 +26,9 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 
 let cycleLoop;
 let currentLoopIndex = 0;
+let enemyLoopIndex = 0;
 let frameCount = 0;
+let enemyFrameCount = 0;
 let currentDirection = 1; //standing
 
 // currentDirection:
@@ -37,13 +43,41 @@ let fireballPosition = positionX + width;
 let positionY = 0;
 const FRAME_LIMIT = 8;
 
-// const init = () => window.requestAnimationFrame(gameLoop);
 const init = () => gameLoop();
+
+const initEnemy = () => {
+    let enemyCycleLoop = [0,1,2];
+    window.requestAnimationFrame(initEnemy);
+
+    let canvasX = -canvas.width + 400;
+    let canvasY = canvas.height - (scaledHeight + 30);
+    let frameY = 0;
+    let frameX = enemyCycleLoop[enemyLoopIndex];
+
+    ctx.save(); 
+    ctx.translate(width, 0);
+    ctx.scale(-1, 1);
+
+    ctx.drawImage(enemy,
+        frameX * width, frameY * enemyHeight, width, enemyHeight,
+        canvasX, canvasY, scaledWidth, scaledHeight);
+
+    ctx.restore(); 
+
+    enemyFrameCount++;
+    if (enemyFrameCount % 8 === 0) {
+        enemyLoopIndex++;
+        if (enemyLoopIndex >= enemyCycleLoop.length) {
+            enemyLoopIndex = 0;
+        }
+        enemyFrameCount = 0;
+    }
+}
 
 let hasMoved = false;
 
 window.addEventListener('keydown', e => {
-    stopAnimation();
+    // stopAnimation();
     switch(e.key){
         case 'p':
             currentDirection = 2;
@@ -71,42 +105,15 @@ window.addEventListener('keydown', e => {
             cycleLoop = [0, 1, 2, 3];
             playAnimation();
             break;
-        case 'a':
-            currentDirection = 4;
-            // fireballPosition += 35;
-            hasMoved = true;
-            cycleLoop = [0, 1];
-            playAnimation();
-
-            triggerFireball();
-            break;
         default: 
-            currentDirection = 1;
-            hasMoved = false;
-            playDefaultAnimation();
             break;
     }
 });
 
 function gameLoop(){
-    switch (currentDirection){
-        case 0 || 1 || 5:
-            cycleLoop = [0,1,2,3];
-            break;
-        case 2:
-            cycleLoop = [0,1,2];
-            break;
-        case 3:
-            cycleLoop = [0,1,2,3,4];
-            break;
-        case 4:
-            cycleLoop = [0,1];
-            break;
-        default:
-            break;
-    }
-
+    cycleLoop = [0,1,2,3];
     playDefaultAnimation();
+    initEnemy();
 }
 
 let defaultAnim;
@@ -137,11 +144,6 @@ const playDefaultAnimation = () => {
                     playDefaultAnimation();
                 }
             }
-            // if (currentLoopIndex >= cycleLoop.length) {
-            //     currentLoopIndex = 0;
-            //     stopAnimation();
-            //     playAnimation();
-            // }
             frameCount = 0;
         }
     } else {
@@ -163,10 +165,10 @@ const playAnimation = () => {
 
     drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
 
-    if(currentDirection === 0){ //hadouken
+    if(currentDirection === 0){ //hadouken fireball
         let fireballCycleLoop = [0,1];
 
-        drawFrame(fireballCycleLoop[currentLoopIndex],4,fireballPosition+=15, canvas.height - (scaledHeight + 30));
+        drawFrame(fireballCycleLoop[currentLoopIndex],4,fireballPosition+=35, canvas.height - (scaledHeight + 30));
 
         if(currentLoopIndex >= fireballCycleLoop.length){
             fireballPosition = positionX + width;
@@ -185,9 +187,3 @@ const playAnimation = () => {
         frameCount = 0;
     }
 }
-
-const triggerFireball = () => {
-    drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
-}
-
-// if standing and key pressed, don't wait til end of cycleloop.
