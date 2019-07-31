@@ -43,42 +43,51 @@ const init = () => gameLoop();
 let hasMoved = false;
 
 window.addEventListener('keydown', e => {
+    stopAnimation();
     switch(e.key){
         case 'p':
             currentDirection = 2;
             hasMoved = true;
-            stopDefaultAnimation();
+            cycleLoop = [0, 1, 2];
             playAnimation();
             break;
         case 'ArrowLeft':
             positionX -= MOVEMENT_SPEED;
             currentDirection = 3;
             hasMoved = true;
+            cycleLoop = [0, 1, 2, 3, 4];
+            playAnimation();
             break;
         case 'ArrowRight':
             positionX += MOVEMENT_SPEED;
             currentDirection = 3;
+            cycleLoop = [0, 1, 2, 3, 4];
+            playAnimation();
             hasMoved = true;
             break;
         case 'h':
             currentDirection = 0;
             hasMoved = true;
+            cycleLoop = [0, 1, 2, 3];
+            playAnimation();
             break;
         case 'a':
             currentDirection = 4;
             fireballPosition += 35;
             hasMoved = true;
+            cycleLoop = [0, 1];
+            playAnimation();
             break;
         default: 
             currentDirection = 1;
             hasMoved = false;
+            playDefaultAnimation();
             break;
     }
 });
 
-// window.addEventListener('keyup', e => keyPresses[e.key] = false);
 function gameLoop(){
-    switch(currentMovement.index){
+    switch (currentDirection){
         case 0 || 1 || 5:
             cycleLoop = [0,1,2,3];
             break;
@@ -107,21 +116,46 @@ const playDefaultAnimation = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawFrame(cycleLoop[currentLoopIndex],1,positionX, canvas.height - (scaledHeight + 30));
 
-    frameCount++;
-    if(frameCount % 8 === 0){
-        currentLoopIndex++;
+    if(!hasMoved){
+        frameCount++;
+        if (frameCount % 8 === 0) {
+            currentLoopIndex++;
 
-        if(currentLoopIndex >= cycleLoop.length){
-            currentLoopIndex = 0;
-        }  
+            if (currentDirection === 1) {
+                if (currentLoopIndex >= cycleLoop.length) {
+                    currentLoopIndex = 0;
+                    stopAnimation();
+                    playAnimation();
+                }
+            } else {
+                if (currentLoopIndex >= cycleLoop.length) {
+                    currentLoopIndex = 0;
+                    stopAnimation();
+                    // playAnimation();
+                    playDefaultAnimation();
+                }
+            }
+            // if (currentLoopIndex >= cycleLoop.length) {
+            //     currentLoopIndex = 0;
+            //     stopAnimation();
+            //     playAnimation();
+            // }
+            frameCount = 0;
+        }
+    } else {
+        stopAnimation();
+        currentLoopIndex = 0;
+        playAnimation();
+        hasMoved = false;
     }
 }
 
-const stopDefaultAnimation = () => window.cancelAnimationFrame(defaultAnim);
-const stopAnimation = (animation) => window.cancelAnimationFrame(animation);
+const stopAnimation = () => {
+    window.cancelAnimationFrame(anim)
+    window.cancelAnimationFrame(defaultAnim)
+}
 
 const playAnimation = () => {
-    cycleLoop = [0,1,2];
     anim = window.requestAnimationFrame(playAnimation);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -133,8 +167,12 @@ const playAnimation = () => {
 
         if(currentLoopIndex >= cycleLoop.length){
             currentLoopIndex = 0;
-            stopAnimation(anim)
+            stopAnimation()
             playDefaultAnimation();
         }  
+        frameCount = 0;
     }
 }
+
+
+// if standing and key pressed, don't wait til end of cycleloop.
