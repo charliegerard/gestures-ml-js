@@ -167,10 +167,10 @@ const createModel = async (xTrain, yTrain, xTest, yTest) => {
     const gesturesData = await Promise.all(allData);
 
     const formattedArray = format(gesturesData);
-    const model = await createModel(formattedArray[0], formattedArray[1], formattedArray[2], formattedArray[3]);
-
-    const prediction = model.predict(formattedArray[0]);
-    const logits = Array.from(prediction.dataSync());
-    const winner = gestureClasses[prediction.argMax(-1).dataSync()[0]];
-    console.log(winner)
+    await createModel(formattedArray[0], formattedArray[1], formattedArray[2], formattedArray[3]);
+    return;
+    // const prediction = model.predict(formattedArray[0]);
+    // const logits = Array.from(prediction.dataSync());
+    // const winner = gestureClasses[prediction.argMax(-1).dataSync()[0]];
+    // console.log(winner)
 })();

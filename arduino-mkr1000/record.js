@@ -4,6 +4,7 @@ const fs = require('fs');
 
 let gestureType;
 let stream, sampleNumber;
+let previousSampleNumber;
 
 const board = new five.Board({
     port: new EtherPortClient({
@@ -21,6 +22,7 @@ board.on("ready", function() {
     process.argv.forEach(function(val, index, array){
         gestureType = array[2];
         sampleNumber = parseInt(array[3]);
+        previousSampleNumber = sampleNumber;
     });
 
     stream = fs.createWriteStream(`./data/arduino/sample_${gestureType}_${sampleNumber}.txt`, {flags: 'a'});
@@ -32,14 +34,21 @@ board.on("ready", function() {
 
     imu.on("data", function() {
         let data = `START ${this.accelerometer.x} ${this.accelerometer.y} ${this.accelerometer.z} ${this.gyro.x} ${this.gyro.y} ${this.gyro.z} END`;
-        console.log(data)
+        // console.log(data)
+
+        console.log(`${this.accelerometer.acceleration} ${this.accelerometer.inclination} ${this.accelerometer.orientation} `)
+        
         button.on("hold", function() {
+            if(sampleNumber !== previousSampleNumber){
+                stream = fs.createWriteStream(`./data/arduino/sample_${gestureType}_${sampleNumber}.txt`, {flags: 'a'});
+            }
             stream.write(`${data} \r\n`);
         });
     });
 
     button.on("release", function() {
         stream.end();
+        sampleNumber+=1;
     });
 });
 
