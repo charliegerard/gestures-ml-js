@@ -175,10 +175,12 @@ let formattedArray;
     // console.log(formattedArray.justFeatures.length); // should be 3
     // console.log(formattedArray.justFeatures[0].length); // should be 25 for 25 files
 
+    // const model = await createModel(formattedArray[0], formattedArray[1], formattedArray[2], formattedArray[3]);
     const model = await createModel(formattedArray[0], formattedArray[1], formattedArray[2], formattedArray[3]);
+    return model;
 
-    const prediction = model.predict(formattedArray[0]);
-    const logits = Array.from(prediction.dataSync());
-    const winner = gestureClasses[prediction.argMax(-1).dataSync()[0]];
-    console.log(winner)
+    // const prediction = model.predict(formattedArray[0]);
+    // const logits = Array.from(prediction.dataSync());
+    // const winner = gestureClasses[prediction.argMax(-1).dataSync()[0]];
+    // console.log(winner)
 })();

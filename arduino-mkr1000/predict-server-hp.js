@@ -8,7 +8,7 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
-app.use(express.static(__dirname + '/examples/sprite-test'))
+app.use(express.static(__dirname + '/examples/harry-potter-spells'))
 
 let liveData = [];
 let predictionDone = false;
@@ -105,6 +105,7 @@ const predict = (model, newSampleData, socket) => {
                 break;
             case 'expelliarmus':
                 console.log('expelliarmus')
+                socket.emit('gesture', winner)
                 break;
             default:
                 break;
