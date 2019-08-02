@@ -16,6 +16,10 @@ let started = false;
 let model;
 const gestureClasses = ['alohomora', 'expelliarmus'];
 
+let numParametersRecorded = 14; // 14 values from Arduino;
+let numLinesPerFile = 190;
+let numValuesExpected = numParametersRecorded * numLinesPerFile;
+
 const init = async () => {
     model = await tf.loadLayersModel('file://model-hp/model.json');
 }
@@ -53,13 +57,21 @@ io.on('connection', function(socket){
                 let data = {xAcc: this.accelerometer.x,
                     yAcc: this.accelerometer.y,
                     zAcc: this.accelerometer.z,
+                    accPitch: this.accelerometer.pitch,
+                    accRoll: this.accelerometer.roll,
+                    acceleration: this.accelerometer.acceleration,
+                    inclination: this.accelerometer.inclination,
+                    orientation: this.accelerometer.orientation,
                     xGyro: this.gyro.x,
                     yGyro: this.gyro.y,
-                    zGyro: this.gyro.z
+                    zGyro: this.gyro.z,
+                    gyroPitch: this.gyro.pitch,
+                    gyroRoll: this.gyro.roll,
+                    gyroYaw: this.gyro.yaw
                 };
 
-                if(liveData.length < 882){
-                    liveData.push(data.xAcc, data.yAcc, data.zAcc, data.xGyro, data.yGyro, data.zGyro)
+                if (liveData.length < numValuesExpected){
+                    liveData.push(data.xAcc, data.yAcc, data.zAcc, data.accPitch, data.accRoll, data.acceleration, data.inclination, data.orientation, data.xGyro, data.yGyro, data.zGyro, data.gyroPitch, data.gyroRoll, data.gyroYaw)
                 } 
             });
 
@@ -81,7 +93,7 @@ const predict = (model, newSampleData, socket) => {
     tf.tidy(() => {
         const inputData = newSampleData;
 
-        const input = tf.tensor2d([inputData], [1, 882]);
+        const input = tf.tensor2d([inputData], [1, numValuesExpected]);
         const predictOut = model.predict(input);
         const logits = Array.from(predictOut.dataSync());
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
