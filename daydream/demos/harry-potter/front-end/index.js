@@ -5,36 +5,48 @@ let model;
 const gestureClasses = ['alohomora', 'expelliarmus'];
 
 const socket = io.connect('http://localhost:3000', { transports: ['websocket'] });
-
 const expelliarmusVideo = document.getElementsByClassName('expelliarmus')[0];
+const patronumVideo = document.getElementsByClassName('patronum')[0];
 
 window.onload = () => {
-    expelliarmusVideo.src = "assets/expelliarmus.mp4";
+    // expelliarmusVideo.src = "assets/expelliarmus.mp4";
     expelliarmusVideo.load();
+    patronumVideo.load();
 }
 
 socket.on('gesture', function (data) {
     switch (data) {
         case 'alohomora':
+            playVideo(patronumVideo);
             break;
         case 'expelliarmus':
-            playVideo();
+            playVideo(expelliarmusVideo);
             break;
         default:
             break;
     }
 });
 
-const playVideo = () => {
-    expelliarmusVideo.style.display = 'block';
+const playVideo = (video) => {
+    video.style.display = 'block';
+    // video.play();
 
-    var playPromise = expelliarmusVideo.play();
+    var playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.then(_ => {
-            expelliarmusVideo.play();
+          // Automatic playback started!
+          // Show playing UI.
+          // We can now safely pause video...
+        //   video.pause();
+            // video.pause();
+            video.play();
         })
         .catch(error => {
-            expelliarmusVideo.play();
+            console.log(error)
+            // video.pause();
+            video.play();
+          // Auto-play was prevented
+          // Show paused UI.
         });
     }
 }
