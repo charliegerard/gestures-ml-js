@@ -3,24 +3,28 @@ var fs = require('fs');
 const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
 
-// const newData = require('./formatNewSample');
+const newData = require('./formatNewSampleHp');
 
 let allData = [];
 let justFeatures = [];
 let justLabels = [];
-let numClasses = 3;
+const gestureClasses = ['alohomora', 'expelliarmus'];
 
-const gestureClasses = ['hadoken', 'punch', 'uppercut'];
+let numClasses = gestureClasses.length;
+let numFiles = 24;
+let linesPerFile = 50;
+let numPointsOfData = 6;
+let totalDataPerFile = linesPerFile * numPointsOfData;
 
 function readFile(file) {
   let trimmedContent = [];
 
   return new Promise((resolve, reject) => {
-    fs.readFile(`data/game/${file}`, "utf8", (err, data) => {
+    fs.readFile(`data/hp/${file}`, "utf8", (err, data) => {
       if (err){
         reject(err);
       } else{ 
-        lineReader.eachLine(`./data/game/${file}`, function(line) {  
+        lineReader.eachLine(`./data/hp/${file}`, function(line) {  
           let truncatedLine = line.substr(line.indexOf('START ') + 6, line.indexOf('END')-7);
           let arrayFromLine = truncatedLine.split(" ");
           let formattedLine = arrayFromLine.map(arrayItem => parseFloat(arrayItem));
@@ -28,7 +32,7 @@ function readFile(file) {
 
           let concatArray = trimmedContent.reduce((acc, val) => acc.concat(val), []);
 
-          if(concatArray.length === 300){
+          if(concatArray.length === totalDataPerFile){
             let trimmedLabel = file.split("_")[1];
             let trimmedLabelIndex;
             gestureClasses.map((gesture, index) => gesture === trimmedLabel ? trimmedLabelIndex = index : undefined);
@@ -41,7 +45,7 @@ function readFile(file) {
 }
 
 const readDir = () => 
-    new Promise((resolve, reject) => fs.readdir(`./data/game/`, "utf8", (err, data) => err ? reject(err) : resolve(data)));
+    new Promise((resolve, reject) => fs.readdir(`./data/hp/`, "utf8", (err, data) => err ? reject(err) : resolve(data)));
 
 (async () => {
   const filenames = await readDir();
@@ -51,7 +55,7 @@ const readDir = () =>
   sortedFilenames.map(async file => { // 75 times
     let originalContent = await readFile(file); 
     allData.push(originalContent);
-    if(allData.length === 63){
+    if(allData.length === numFiles){ // numFiles
       split(allData)
     }
   })
@@ -147,7 +151,7 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
   const model = tf.sequential();
   model.add(tf.layers.dense(
       {units: 10, activation: 'sigmoid', inputShape: [xTrain.shape[1]]}));
-  model.add(tf.layers.dense({units: 3, activation: 'softmax'}));
+  model.add(tf.layers.dense({units: numClasses, activation: 'softmax'}));
   model.summary();
 
   const optimizer = tf.train.adam(params.learningRate);
@@ -170,17 +174,17 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
     }
   });
   
-//   let newSampleData = await newData();
+  let newSampleData = await newData();
 
-  // predict(model, newSampleData);
-  await model.save('file://model-game');
+  predict(model, newSampleData);
+  await model.save('file://model-hp');
   return model;
 }
 
 const predict = (model, newSampleData) => {
   tf.tidy(() => {
     const inputData = newSampleData;
-    const input = tf.tensor2d([inputData], [1, 360]);
+    const input = tf.tensor2d([inputData], [1, totalDataPerFile]);
 
     const predictOut = model.predict(input);
     const logits = Array.from(predictOut.dataSync());

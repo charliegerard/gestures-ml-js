@@ -3,24 +3,24 @@ var fs = require('fs');
 const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
 
-const newData = require('./formatNewSample');
+// const newData = require('./formatNewSample');
 
 let allData = [];
 let justFeatures = [];
 let justLabels = [];
 let numClasses = 3;
 
-const gestureClasses = ['cross', 'square', 'triangle'];
+const gestureClasses = ['hadoken', 'punch', 'uppercut'];
 
 function readFile(file) {
   let trimmedContent = [];
 
   return new Promise((resolve, reject) => {
-    fs.readFile(`data/${file}`, "utf8", (err, data) => {
+    fs.readFile(`data/game/${file}`, "utf8", (err, data) => {
       if (err){
         reject(err);
       } else{ 
-        lineReader.eachLine(`./data/${file}`, function(line) {  
+        lineReader.eachLine(`./data/game/${file}`, function(line) {  
           let truncatedLine = line.substr(line.indexOf('START ') + 6, line.indexOf('END')-7);
           let arrayFromLine = truncatedLine.split(" ");
           let formattedLine = arrayFromLine.map(arrayItem => parseFloat(arrayItem));
@@ -28,7 +28,7 @@ function readFile(file) {
 
           let concatArray = trimmedContent.reduce((acc, val) => acc.concat(val), []);
 
-          if(concatArray.length === 360){
+          if(concatArray.length === 300){
             let trimmedLabel = file.split("_")[1];
             let trimmedLabelIndex;
             gestureClasses.map((gesture, index) => gesture === trimmedLabel ? trimmedLabelIndex = index : undefined);
@@ -41,7 +41,7 @@ function readFile(file) {
 }
 
 const readDir = () => 
-    new Promise((resolve, reject) => fs.readdir(`./data/`, "utf8", (err, data) => err ? reject(err) : resolve(data)));
+    new Promise((resolve, reject) => fs.readdir(`./data/game/`, "utf8", (err, data) => err ? reject(err) : resolve(data)));
 
 (async () => {
   const filenames = await readDir();
@@ -51,7 +51,7 @@ const readDir = () =>
   sortedFilenames.map(async file => { // 75 times
     let originalContent = await readFile(file); 
     allData.push(originalContent);
-    if(allData.length === 75){
+    if(allData.length === 63){
       split(allData)
     }
   })
@@ -170,10 +170,10 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
     }
   });
   
-  let newSampleData = await newData();
+//   let newSampleData = await newData();
 
-  predict(model, newSampleData);
-  // await model.save('file://model-1');
+  // predict(model, newSampleData);
+  // await model.save('file://model-game');
   return model;
 }
 
