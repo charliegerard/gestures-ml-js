@@ -5,6 +5,9 @@ img.onload = () => init();
 let enemy = new Image();
 enemy.src = 'images/guile.png';
 
+let shoruyken = new Image();
+shoruyken.src = 'images/ken-shoryuken.png';
+
 let canvas = document.querySelector('canvas');
 canvas.width = document.body.clientWidth; //document.width is obsolete
 canvas.height = document.body.clientHeight; //document.height is obsolete
@@ -19,6 +22,11 @@ const scaledWidth = scale * width;
 const scaledHeight = scale * height;
 
 function drawFrame(frameX, frameY, canvasX, canvasY) {
+    if(currentDirection === 4){
+        ctx.drawImage(shoruyken,
+            frameX * width, frameY * height, width, height,
+            canvasX, canvasY, scaledWidth, scaledHeight);
+    }
     ctx.drawImage(img,
         frameX * width, frameY * height, width, height,
         canvasX, canvasY, scaledWidth, scaledHeight);
@@ -105,6 +113,12 @@ window.addEventListener('keydown', e => {
             cycleLoop = [0, 1, 2, 3];
             playAnimation();
             break;
+        case 'a':
+            currentDirection = 4;
+            cycleLoop = [0, 1, 2, 3, 4, 5, 6];
+            // positionY += MOVEMENT_SPEED;
+            playAnimation();
+            break;
         default: 
             break;
     }
@@ -172,6 +186,18 @@ const playAnimation = () => {
 
         if(currentLoopIndex >= fireballCycleLoop.length){
             fireballPosition = positionX + width;
+        }
+    }
+
+    if(currentDirection === 4){
+        let shoryukenCycleLoop = [0,1,2,3,4,5,6];
+        let frameY = 0;
+        let frameX = shoryukenCycleLoop[currentLoopIndex];
+
+        drawFrame(shoryukenCycleLoop[currentLoopIndex], 0, positionX, fireballPosition -= 35);
+
+        if (currentLoopIndex >= shoryukenCycleLoop.length) {
+            currentLoopIndex = 0;
         }
     }
 
