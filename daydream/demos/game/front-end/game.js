@@ -1,6 +1,5 @@
 let img = new Image();
 img.src = 'images/ken.png';
-img.onload = () => init();
 
 let enemy = new Image();
 enemy.src = 'images/guile.png';
@@ -21,195 +20,162 @@ const enemyHeight = 90;
 const scaledWidth = scale * width;
 const scaledHeight = scale * height;
 
-function drawFrame(frameX, frameY, canvasX, canvasY) {
-    if(currentDirection === 4){
-        ctx.drawImage(shoruyken,
-            frameX * width, frameY * height, width, height,
-            canvasX, canvasY, scaledWidth, scaledHeight);
-    }
-    ctx.drawImage(img,
-        frameX * width, frameY * height, width, height,
-        canvasX, canvasY, scaledWidth, scaledHeight);
-}
+const jumpHeight = 150;
+const jumpScaledHeight = scale * jumpHeight;
 
-let cycleLoop;
 let currentLoopIndex = 0;
 let enemyLoopIndex = 0;
-let frameCount = 0;
 let enemyFrameCount = 0;
-let currentDirection = 1; //standing
-
-// currentDirection:
-// 0 ==> hadouken
-// 1 ==> standing
-// 2 ==> punch
-// 3 ==> walk
 
 const MOVEMENT_SPEED = 6;
 let positionX = 0;
 let fireballPosition = positionX + width;
 let positionY = 0;
-const FRAME_LIMIT = 8;
 
-const init = () => gameLoop();
-
-const initEnemy = () => {
-    let enemyCycleLoop = [0,1,2];
-    window.requestAnimationFrame(initEnemy);
-
-    let canvasX = -canvas.width + 400;
-    let canvasY = canvas.height - (scaledHeight + 30);
-    let frameY = 0;
-    let frameX = enemyCycleLoop[enemyLoopIndex];
-
-    ctx.save(); 
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-
-    ctx.drawImage(enemy,
-        frameX * width, frameY * enemyHeight, width, enemyHeight,
-        canvasX, canvasY, scaledWidth, scaledHeight);
-
-    ctx.restore(); 
-
-    enemyFrameCount++;
-    if (enemyFrameCount % 8 === 0) {
-        enemyLoopIndex++;
-        if (enemyLoopIndex >= enemyCycleLoop.length) {
-            enemyLoopIndex = 0;
-        }
-        enemyFrameCount = 0;
-    }
-}
+// new try
 
 let hasMoved = false;
+var fps, fpsInterval, startTime, now, then, elapsed;
 
-window.addEventListener('keydown', e => {
-    // stopAnimation();
-    switch(e.key){
-        case 'p':
-            currentDirection = 2;
-            hasMoved = true;
-            cycleLoop = [0, 1, 2];
-            playAnimation();
-            break;
-        case 'ArrowLeft':
-            positionX -= MOVEMENT_SPEED;
-            currentDirection = 3;
-            hasMoved = true;
-            cycleLoop = [0, 1, 2, 3, 4];
-            playAnimation();
-            break;
-        case 'ArrowRight':
-            positionX += MOVEMENT_SPEED;
-            currentDirection = 3;
-            cycleLoop = [0, 1, 2, 3, 4];
-            playAnimation();
-            hasMoved = true;
-            break;
-        case 'h':
-            currentDirection = 0;
-            hasMoved = true;
-            cycleLoop = [0, 1, 2, 3];
-            playAnimation();
-            break;
-        case 'a':
-            currentDirection = 4;
-            cycleLoop = [0, 1, 2, 3, 4, 5, 6];
-            // positionY += MOVEMENT_SPEED;
-            playAnimation();
-            break;
-        default: 
-            break;
+// window.addEventListener('keydown', e => {
+//     switch(e.key){
+//         case 'p':
+//             spritePosition = 2;
+//             loop = [0, 1, 2];
+//             break;
+//         case 'ArrowLeft':
+//             positionX -= MOVEMENT_SPEED;
+//             spritePosition = 3;
+//             loop = [0, 1, 2, 3, 4];
+//             break;
+//         case 'ArrowRight':
+//             positionX += MOVEMENT_SPEED;
+//             spritePosition = 3;
+//             loop = [0, 1, 2, 3, 4];
+//             break;
+//         case 'h':
+//             spritePosition = 0;
+//             loop = [0, 1, 2, 3];
+//             break;
+//         case 'a':
+//             spritePosition = 4;
+//             loop = [0, 1, 2, 3, 4, 5, 6];
+//             break;
+//         default: 
+//             break;
+//     }
+//     hasMoved = true;
+// });
+
+class Game{
+    constructor(){
+        this.start = () => this.startAnimating(7);
+        this.loop = [0,1,2,3];
+        this.spritePosition = 1;
     }
-});
 
-function gameLoop(){
-    cycleLoop = [0,1,2,3];
-    playDefaultAnimation();
-    initEnemy();
-}
+    setLoopAndPosition(loop, position){
+        this.loop = loop;
+        this.spritePosition = position;
+        hasMoved = true;
+    }
 
-let defaultAnim;
-let anim;
+    startAnimating(fps) {
+        fpsInterval = 1000 / fps;
+        then = Date.now();
+        startTime = then;
+    
+        this.animate();
+        this.initEnemy();
+    }
 
-const playDefaultAnimation = () => {
-    let cycleLoop = [0,1,2,3];
-    defaultAnim = window.requestAnimationFrame(playDefaultAnimation);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawFrame(cycleLoop[currentLoopIndex],1,positionX, canvas.height - (scaledHeight + 30));
+    drawFrame(frameX, frameY, canvasX, canvasY) {
+        ctx.drawImage(img,
+            frameX * width, frameY * height, width, height,
+            canvasX, canvasY, scaledWidth, scaledHeight);
+    }
 
-    if(!hasMoved){
-        frameCount++;
-        if (frameCount % 8 === 0) {
+    drawJumpFrame(frameX, frameY, canvasX, canvasY){
+        ctx.drawImage(shoruyken,
+            frameX * width, frameY * height, width, jumpHeight,
+            canvasX, canvasY, scaledWidth, jumpScaledHeight);
+    }
+
+    animate = () => {
+        window.requestAnimationFrame(this.animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(hasMoved){
+            currentLoopIndex = 0;
+            hasMoved = false;
+        }
+    
+        if(this.spritePosition !== 4){
+            this.drawFrame(this.loop[currentLoopIndex],this.spritePosition,positionX, canvas.height - (scaledHeight + 30));
+        }
+    
+        if(this.spritePosition === 0){ // hadoken add sprite for fireball
+            let fireballCycleLoop = [0,1];
+    
+            this.drawFrame(fireballCycleLoop[currentLoopIndex],4,fireballPosition+=35, canvas.height - (scaledHeight + 30));
+    
+            if(currentLoopIndex >= fireballCycleLoop.length){
+                fireballPosition = positionX + width;
+            }
+        }
+    
+        if(this.spritePosition === 4){ // hadoken add sprite for fireball
+            this.drawJumpFrame(this.loop[currentLoopIndex],0,0, positionY);
+        }
+    
+        now = Date.now();
+        elapsed = now - then;
+      
+        if (elapsed > fpsInterval) {
+            // Get ready for next frame by setting then=now, but also adjust for your
+            // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
+            then = now - (elapsed % fpsInterval);
+    
             currentLoopIndex++;
-
-            if (currentDirection === 1) {
-                if (currentLoopIndex >= cycleLoop.length) {
-                    currentLoopIndex = 0;
-                    stopAnimation();
-                    playAnimation();
-                }
-            } else {
-                if (currentLoopIndex >= cycleLoop.length) {
-                    currentLoopIndex = 0;
-                    stopAnimation();
-                    // playAnimation();
-                    playDefaultAnimation();
+    
+            if (currentLoopIndex >= this.loop.length) {
+                currentLoopIndex = 0;
+         
+                if(this.spritePosition !== 1){
+                    this.spritePosition = 1;
+                    this.loop = [0, 1, 2, 3];
                 }
             }
-            frameCount = 0;
-        }
-    } else {
-        stopAnimation();
-        currentLoopIndex = 0;
-        playAnimation();
-        hasMoved = false;
-    }
-}
-
-const stopAnimation = () => {
-    window.cancelAnimationFrame(anim)
-    window.cancelAnimationFrame(defaultAnim)
-}
-
-const playAnimation = () => {
-    anim = window.requestAnimationFrame(playAnimation);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    drawFrame(cycleLoop[currentLoopIndex],currentDirection,positionX, canvas.height - (scaledHeight + 30));
-
-    if(currentDirection === 0){ //hadouken fireball
-        let fireballCycleLoop = [0,1];
-
-        drawFrame(fireballCycleLoop[currentLoopIndex],4,fireballPosition+=35, canvas.height - (scaledHeight + 30));
-
-        if(currentLoopIndex >= fireballCycleLoop.length){
-            fireballPosition = positionX + width;
         }
     }
 
-    if(currentDirection === 4){
-        let shoryukenCycleLoop = [0,1,2,3,4,5,6];
+    initEnemy = () => {
+        let enemyCycleLoop = [0,1,2];
+        window.requestAnimationFrame(this.initEnemy);
+    
+        let canvasX = -canvas.width + 400;
+        let canvasY = canvas.height - (scaledHeight + 30);
         let frameY = 0;
-        let frameX = shoryukenCycleLoop[currentLoopIndex];
-
-        drawFrame(shoryukenCycleLoop[currentLoopIndex], 0, positionX, fireballPosition -= 35);
-
-        if (currentLoopIndex >= shoryukenCycleLoop.length) {
-            currentLoopIndex = 0;
+        let frameX = enemyCycleLoop[enemyLoopIndex];
+    
+        ctx.save(); 
+        ctx.translate(width, 0);
+        ctx.scale(-1, 1);
+    
+        ctx.drawImage(enemy,
+            frameX * width, frameY * enemyHeight, width, enemyHeight,
+            canvasX, canvasY, scaledWidth, scaledHeight);
+    
+        ctx.restore(); 
+    
+        enemyFrameCount++;
+        if (enemyFrameCount % 8 === 0) {
+            enemyLoopIndex++;
+            if (enemyLoopIndex >= enemyCycleLoop.length) {
+                enemyLoopIndex = 0;
+            }
+            enemyFrameCount = 0;
         }
     }
-
-    frameCount++;
-    if(frameCount % 8 === 0){
-        currentLoopIndex++;
-
-        if(currentLoopIndex >= cycleLoop.length){
-            currentLoopIndex = 0;
-            stopAnimation()
-            playDefaultAnimation();
-        }  
-        frameCount = 0;
-    }
 }
+
+export default Game;
