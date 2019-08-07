@@ -1,6 +1,5 @@
 # Gesture recognition
 
-
 - [x] Record data from Arduino 
 - [x] Train model
 - [x] Predict 
@@ -11,21 +10,20 @@
 
 - [x] Set up sounds on movements
 - [x] Trigger stuff from web socket message in front-end
-- [] SET UP JUMP
+- [x] SET UP JUMP
 
 
 ## HP
 
 - [] set up front-end for HP demo
-- [] Set up different server file for HP demo
-
-- [] Set up Daydream demo for HP
+- [x] Set up different server file for HP demo
+- [x] Set up Daydream demo for HP
 
 
 ## Phone
 
 - [] Setup record file for phone
-- []
+- [] 
 
 
 ## Myo
