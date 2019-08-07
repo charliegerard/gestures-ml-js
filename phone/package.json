@@ -1,0 +1,20 @@
+{
+  "name": "gesture-ml-phone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^1.1.2",
+    "@tensorflow/tfjs-node": "^1.1.2",
+    "daydream-node": "^1.0.4",
+    "express": "^4.17.1",
+    "line-reader": "^0.4.0",
+    "sass": "^1.20.1",
+    "socket.io": "^2.2.0"
+  }
+}

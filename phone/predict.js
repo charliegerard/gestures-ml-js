@@ -1,0 +1,48 @@
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-node');
+var daydream = require('daydream-node')();
+
+const express = require('express');
+const app = express();
+var http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+let liveData = [];
+let predictionDone = false;
+
+let model;
+const gestureClasses = ['alohomora', 'expelliarmus'];
+
+app.use(express.static(__dirname + '/front-end'))
+
+io.on('connection', async function(socket){
+    model = await tf.loadLayersModel('file://model-hp/model.json');
+
+    getDaydreamData(socket);
+});
+
+
+// const predict = (model, newSampleData,socket) => {
+//     tf.tidy(() => {
+//         const inputData = newSampleData;
+//         const input = tf.tensor2d([inputData], [1, 300]);
+//         const predictOut = model.predict(input);
+//         const logits = Array.from(predictOut.dataSync());
+//         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
+
+//         switch(winner){
+//             case 'alohomora':
+//                 socket.emit('gesture', 'alohomora');
+//                 break;
+//             case 'expelliarmus':
+//                 socket.emit('gesture', 'expelliarmus');
+//                 break;
+//             default:
+//                 break;
+//         }
+//     });
+// }
+
+http.listen(3000, function(){
+    console.log('listening on *:3000');
+});
