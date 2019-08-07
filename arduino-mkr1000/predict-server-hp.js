@@ -16,7 +16,7 @@ let started = false;
 let model;
 const gestureClasses = ['alohomora', 'expelliarmus'];
 
-let numParametersRecorded = 14; // 14 values from Arduino;
+let numParametersRecorded = 11; // 14 values from Arduino;
 let numLinesPerFile = 190;
 let numValuesExpected = numParametersRecorded * numLinesPerFile;
 

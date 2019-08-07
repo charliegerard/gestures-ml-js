@@ -33,8 +33,9 @@ board.on("ready", function() {
     });
 
     imu.on("data", function() {
-        let data = `START ${this.accelerometer.x} ${this.accelerometer.y} ${this.accelerometer.z} ${this.accelerometer.pitch} ${this.accelerometer.roll} ${this.accelerometer.acceleration} ${this.accelerometer.inclination} ${this.accelerometer.orientation} ${this.gyro.x} ${this.gyro.y} ${this.gyro.z} ${this.gyro.pitch} ${this.gyro.roll} ${this.gyro.yaw} END`;
-        // console.log(data)
+        // let data = `START ${this.accelerometer.x} ${this.accelerometer.y} ${this.accelerometer.z} ${this.accelerometer.pitch} ${this.accelerometer.roll} ${this.accelerometer.acceleration} ${this.accelerometer.inclination} ${this.accelerometer.orientation} ${this.gyro.x} ${this.gyro.y} ${this.gyro.z} ${this.gyro.pitch} ${this.gyro.roll} ${this.gyro.yaw} END`;
+        let data = `START ${this.accelerometer.x} ${this.accelerometer.y} ${this.accelerometer.z} ${this.accelerometer.pitch} ${this.accelerometer.roll} ${this.accelerometer.acceleration} ${this.accelerometer.inclination} ${this.accelerometer.orientation} ${this.gyro.x} ${this.gyro.y} ${this.gyro.z} END`;
+        console.log(data)
 
         button.on("hold", function() {
             if(sampleNumber !== previousSampleNumber){

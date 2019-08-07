@@ -13,8 +13,8 @@ const gestureClasses = ['alohomora', 'expelliarmus'];
 
 let numClasses = gestureClasses.length;
 
-let numParametersRecorded = 14; // 14 values from Arduino;
-let numLinesPerFile = 190;
+let numParametersRecorded = 11; // 14 values from Arduino;
+let numLinesPerFile = 300;
 let lengthAllDataPerFile = numParametersRecorded * numLinesPerFile;
 let totalNumberDataFiles;
 
