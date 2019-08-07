@@ -9,9 +9,13 @@ const expelliarmusVideo = document.getElementsByClassName('expelliarmus')[0];
 const patronumVideo = document.getElementsByClassName('patronum')[0];
 
 window.onload = () => {
-    // expelliarmusVideo.src = "assets/expelliarmus.mp4";
     expelliarmusVideo.load();
     patronumVideo.load();
+
+    document.getElementsByTagName('button')[0].onclick = () => {
+        document.getElementsByClassName('intro')[0].classList.add('fade');
+        
+    }
 }
 
 socket.on('gesture', function (data) {
@@ -28,25 +32,29 @@ socket.on('gesture', function (data) {
 });
 
 const playVideo = (video) => {
-    video.style.display = 'block';
-    // video.play();
+    if(video === expelliarmusVideo){
+        expelliarmusVideo.style.display = 'block';
+        patronumVideo.style.display = 'none';
+    } else {
+        expelliarmusVideo.style.display = 'none';
+        patronumVideo.style.display = 'block';
+    }
 
     var playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.then(_ => {
-          // Automatic playback started!
-          // Show playing UI.
-          // We can now safely pause video...
-        //   video.pause();
-            // video.pause();
-            video.play();
+            if(video === expelliarmusVideo){
+                expelliarmusVideo.play();
+                patronumVideo.pause();
+            } else {
+                expelliarmusVideo.pause();
+                patronumVideo.play();
+            }
+
+            // video.play();
         })
         .catch(error => {
-            console.log(error)
-            // video.pause();
-            video.play();
-          // Auto-play was prevented
-          // Show paused UI.
+            console.log("error: ", error);
         });
     }
 }
