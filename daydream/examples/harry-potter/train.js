@@ -177,7 +177,7 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
   let newSampleData = await newData();
 
   predict(model, newSampleData);
-  await model.save('file://model-hp');
+  await model.save('file://model');
   return model;
 }
 
