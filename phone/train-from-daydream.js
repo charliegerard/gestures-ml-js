@@ -174,23 +174,23 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
     }
   });
   
-//   let newSampleData = await newData();
+  // let newSampleData = await newData();
 
-//   predict(model, newSampleData);
+  // predict(model, newSampleData);
   await model.save('file://model-game');
   return model;
 }
 
-// const predict = (model, newSampleData) => {
-//   tf.tidy(() => {
-//     const inputData = newSampleData;
-//     const input = tf.tensor2d([inputData], [1, totalDataPerFile]);
+const predict = (model, newSampleData) => {
+  tf.tidy(() => {
+    const inputData = newSampleData;
+    const input = tf.tensor2d([inputData], [1, totalDataPerFile]);
 
-//     const predictOut = model.predict(input);
-//     const logits = Array.from(predictOut.dataSync());
-//     const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
+    const predictOut = model.predict(input);
+    const logits = Array.from(predictOut.dataSync());
+    const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
 
-//     console.log("WINNER", winner);
-//   });
-// }
+    console.log("WINNER", winner);
+  });
+}
 

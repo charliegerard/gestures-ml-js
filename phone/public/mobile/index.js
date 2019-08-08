@@ -15,8 +15,6 @@ let acceleration = {
     z: ''
 }
 
-let counter = 0;
-
 window.onload = function() {
     socket.emit('connected')
 
@@ -36,8 +34,16 @@ window.onload = function() {
     window.addEventListener("devicemotion", handleMotion, true);
 
     document.body.addEventListener('touchstart', (e) => {
+        let data = {
+            xAcc: acceleration.x,
+            yAcc: acceleration.y,
+            zAcc: acceleration.z,
+            xGyro: rotation.x,
+            yGyro: rotation.y,
+            zGyro: rotation.z,
+        }
         interval = setInterval(function() {
-            socket.emit('motion data', `START ${acceleration.x} ${acceleration.y} ${acceleration.z} ${rotation.x} ${rotation.y} ${rotation.z} END`)
+            socket.emit('motion data', data)
         }, 10);
     })
 }

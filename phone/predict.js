@@ -1,6 +1,5 @@
 const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
-var daydream = require('daydream-node')();
 
 const express = require('express');
 const app = express();
@@ -13,35 +12,52 @@ let predictionDone = false;
 let model;
 const gestureClasses = ['alohomora', 'expelliarmus'];
 
-app.use(express.static(__dirname + '/front-end'))
+app.use('/predict', express.static(__dirname + '/public/mobile/'));
 
 io.on('connection', async function(socket){
     model = await tf.loadLayersModel('file://model-hp/model.json');
+    socket.on('motion data', function(data){
+        predictionDone = false;
+        if(liveData.length < 576){
+            liveData.push(data.xAcc, data.yAcc, data.zAcc, data.xGyro, data.yGyro, data.zGyro)
+        }
+    })
 
-    getDaydreamData(socket);
+    socket.on('end motion data', function(){
+        if(!predictionDone && liveData.length){
+            predictionDone = true;
+            predict(model, liveData, socket);
+            liveData = [];
+        }
+    })
+
+    socket.on('connected', function(data){
+        console.log('front end connected')
+    })
 });
 
-
-// const predict = (model, newSampleData,socket) => {
-//     tf.tidy(() => {
-//         const inputData = newSampleData;
-//         const input = tf.tensor2d([inputData], [1, 300]);
-//         const predictOut = model.predict(input);
-//         const logits = Array.from(predictOut.dataSync());
-//         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
-
-//         switch(winner){
-//             case 'alohomora':
-//                 socket.emit('gesture', 'alohomora');
-//                 break;
-//             case 'expelliarmus':
-//                 socket.emit('gesture', 'expelliarmus');
-//                 break;
-//             default:
-//                 break;
-//         }
-//     });
-// }
+const predict = (model, newSampleData,socket) => {
+    tf.tidy(() => {
+        const inputData = newSampleData;
+        const input = tf.tensor2d([inputData], [1, 576]);
+        const predictOut = model.predict(input);
+        const logits = Array.from(predictOut.dataSync());
+        const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
+        
+        switch(winner){
+            case 'alohomora':
+                // socket.emit('gesture', 'alohomora');
+                console.log('alohomora')
+                break;
+            case 'expelliarmus':
+                // socket.emit('gesture', 'expelliarmus');
+                console.log('expelliarmus')
+                break;
+            default:
+                break;
+        }
+    });
+}
 
 http.listen(3000, function(){
     console.log('listening on *:3000');

@@ -2,15 +2,39 @@ const express = require('express');
 const app = express();
 var http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const fs = require('fs');
 
-app.use('/', express.static(__dirname + '/public/mobile/record/'));
+let stream;
+let sampleNumber;
+let gestureType;
+let previousSampleNumber;
 
-io.on('connection', async function(socket){
-    socket.on('mouse', function(data){
-        console.log(data)
+app.use('/record', express.static(__dirname + '/public/mobile/record/'));
+
+process.argv.forEach(function (val, index, array) {
+    gestureType = array[2];
+    sampleNumber = parseInt(array[3]);
+    previousSampleNumber = sampleNumber;
+    stream = fs.createWriteStream(`data/game/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
+});
+
+io.on('connection', function(socket){
+    socket.on('motion data', function(data){
+        if(sampleNumber !== previousSampleNumber){
+            stream = fs.createWriteStream(`./data/game/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
+        }
+        stream.write(`${data} \r\n`);
+    })
+
+    socket.on('end motion data', function(){
+        stream.end();
+        sampleNumber+=1;
+    })
+
+    socket.on('connected', function(data){
+        console.log('front end connected')
     })
 });
 
-http.listen(3000, function(){
-    console.log('listening on *:3000');
-});
+
+http.listen(process.env.PORT || 3000);
