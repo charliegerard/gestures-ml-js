@@ -11,8 +11,8 @@ let justLabels = [];
 const gestureClasses = ['punch', 'hadoken', 'uppercut'];
 
 let numClasses = gestureClasses.length;
-let numFiles = 78;
-let linesPerFile = 67;
+let numFiles = 33;
+let linesPerFile = 50;
 let numPointsOfData = 6;
 let totalDataPerFile = linesPerFile * numPointsOfData;
 

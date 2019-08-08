@@ -3,13 +3,13 @@ const socket = io();
 let interval;
 let phoneData = [];
 
-let rotation = {
+let gyroscopeData = {
     x: '',
     y: '',
     z: ''
 }
 
-let acceleration = {
+let accelerometerData = {
     x: '',
     y: '',
     z: ''
@@ -17,30 +17,16 @@ let acceleration = {
 
 window.onload = function() {
     socket.emit('connected')
-
-    function handleOrientation(e) {
-        rotation.x = e.beta;
-        rotation.y = e.gamma;
-        rotation.z = e.alpha;
-    }
-
-    function handleMotion(e){
-        acceleration.x = e.accelerationIncludingGravity.x;
-        acceleration.y = e.accelerationIncludingGravity.y;
-        acceleration.z = e.accelerationIncludingGravity.z;
-    }
-    
-    window.addEventListener("deviceorientation", handleOrientation, true);
-    window.addEventListener("devicemotion", handleMotion, true);
+    initSensors();
 
     document.body.addEventListener('touchstart', (e) => {
         let data = {
-            xAcc: acceleration.x,
-            yAcc: acceleration.y,
-            zAcc: acceleration.z,
-            xGyro: rotation.x,
-            yGyro: rotation.y,
-            zGyro: rotation.z,
+            xAcc: accelerometerData.x,
+            yAcc: accelerometerData.y,
+            zAcc: accelerometerData.z,
+            xGyro: gyroscopeData.x,
+            yGyro: gyroscopeData.y,
+            zGyro: gyroscopeData.z,
         }
         interval = setInterval(function() {
             socket.emit('motion data', data)
@@ -52,3 +38,23 @@ document.body.addEventListener('touchend', (e) => {
     socket.emit('end motion data')
     clearInterval(interval);
 });
+
+function initSensors() {
+    let gyroscope = new Gyroscope({frequency: 60});
+
+    gyroscope.addEventListener('reading', e => {
+        gyroscopeData.x = gyroscope.x;
+        gyroscopeData.y = gyroscope.y;
+        gyroscopeData.z = gyroscope.z;
+    });
+    gyroscope.start();
+
+    let accelerometer = new Accelerometer({frequency: 60});
+
+    accelerometer.addEventListener('reading', e => {
+        accelerometerData.x = accelerometer.x;
+        accelerometerData.y = accelerometer.y;
+        accelerometerData.z = accelerometer.z;
+    });
+    accelerometer.start();
+}

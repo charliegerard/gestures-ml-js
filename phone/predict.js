@@ -10,15 +10,15 @@ let liveData = [];
 let predictionDone = false;
 
 let model;
-const gestureClasses = ['alohomora', 'expelliarmus'];
+const gestureClasses = ['punch', 'hadoken', 'uppercut'];
 
 app.use('/predict', express.static(__dirname + '/public/mobile/'));
 
 io.on('connection', async function(socket){
-    model = await tf.loadLayersModel('file://model-hp/model.json');
+    model = await tf.loadLayersModel('file://model-game/model.json');
     socket.on('motion data', function(data){
         predictionDone = false;
-        if(liveData.length < 576){
+        if(liveData.length < 300){
             liveData.push(data.xAcc, data.yAcc, data.zAcc, data.xGyro, data.yGyro, data.zGyro)
         }
     })
@@ -39,19 +39,23 @@ io.on('connection', async function(socket){
 const predict = (model, newSampleData,socket) => {
     tf.tidy(() => {
         const inputData = newSampleData;
-        const input = tf.tensor2d([inputData], [1, 576]);
+        const input = tf.tensor2d([inputData], [1, 300]);
         const predictOut = model.predict(input);
         const logits = Array.from(predictOut.dataSync());
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
         
         switch(winner){
-            case 'alohomora':
+            case 'punch':
                 // socket.emit('gesture', 'alohomora');
-                console.log('alohomora')
+                console.log('punch')
                 break;
-            case 'expelliarmus':
+            case 'hadoken':
                 // socket.emit('gesture', 'expelliarmus');
-                console.log('expelliarmus')
+                console.log('hadoken')
+                break;
+            case 'uppercut':
+                // socket.emit('gesture', 'expelliarmus');
+                console.log('uppercut')
                 break;
             default:
                 break;
