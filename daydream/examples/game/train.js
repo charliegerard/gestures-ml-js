@@ -356,6 +356,6 @@ const createModel = async(xTrain, yTrain, xTest, yTest) => {
     validationData: [xTest, yTest],
   });
   
-  await model.save('file://model2');
+  await model.save('file://model');
   return model;
 }
