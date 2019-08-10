@@ -23,7 +23,7 @@ io.on('connection', function(socket){
         if(sampleNumber !== previousSampleNumber){
             stream = fs.createWriteStream(`./data/game/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
         }
-        stream.write(`${data} \r\n`);
+        stream.write(`${data}\r\n`);
     })
 
     socket.on('end motion data', function(){

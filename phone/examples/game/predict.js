@@ -10,12 +10,13 @@ let liveData = [];
 let predictionDone = false;
 
 let model;
-const gestureClasses = ['punch', 'hadoken', 'uppercut'];
+const gestureClasses = ['hadoken', 'punch', 'uppercut'];
 
-app.use('/predict', express.static(__dirname + '/public/mobile/'));
+app.use('/', express.static(__dirname + '/public/desktop'));
+app.use('/predict', express.static(__dirname + '/public/mobile'));
 
 io.on('connection', async function(socket){
-    model = await tf.loadLayersModel('file://model-game/model.json');
+    model = await tf.loadLayersModel('file://model/model.json');
     socket.on('motion data', function(data){
         predictionDone = false;
         if(liveData.length < 300){
@@ -26,7 +27,7 @@ io.on('connection', async function(socket){
     socket.on('end motion data', function(){
         if(!predictionDone && liveData.length){
             predictionDone = true;
-            predict(model, liveData, socket);
+            predict(model, liveData);
             liveData = [];
         }
     })
@@ -36,7 +37,7 @@ io.on('connection', async function(socket){
     })
 });
 
-const predict = (model, newSampleData,socket) => {
+const predict = (model, newSampleData) => {
     tf.tidy(() => {
         const inputData = newSampleData;
         const input = tf.tensor2d([inputData], [1, 300]);
@@ -46,16 +47,13 @@ const predict = (model, newSampleData,socket) => {
         
         switch(winner){
             case 'punch':
-                // socket.emit('gesture', 'alohomora');
-                console.log('punch')
+                io.emit('gesture', 'punch');
                 break;
             case 'hadoken':
-                // socket.emit('gesture', 'expelliarmus');
-                console.log('hadoken')
+                io.emit('gesture', 'hadoken');
                 break;
             case 'uppercut':
-                // socket.emit('gesture', 'expelliarmus');
-                console.log('uppercut')
+                io.emit('gesture', 'uppercut');
                 break;
             default:
                 break;

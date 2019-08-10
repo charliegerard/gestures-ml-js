@@ -1,0 +1,9 @@
+body{
+    margin: 0;
+    background-image: url('images/bg.jpg');
+    background-size: cover;
+}
+canvas{
+    bottom: 0;
+    position: absolute;
+}

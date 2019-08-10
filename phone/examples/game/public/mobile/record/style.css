@@ -1,0 +1,9 @@
+button{
+    user-select: none;
+    width: 50%;
+    padding: 1em;
+}
+
+body{
+    user-select: none;
+}

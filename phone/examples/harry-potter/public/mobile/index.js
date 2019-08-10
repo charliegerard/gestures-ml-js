@@ -1,3 +1,4 @@
+// const socket = io.connect('http://localhost:3000', { transports: ['websocket'] });
 const socket = io();
 let interval;
 let phoneData = [];
@@ -14,15 +15,21 @@ let accelerometerData = {
     z: ''
 }
 
-let counter = 0;
-
 window.onload = function() {
     socket.emit('connected')
     initSensors();
 
     document.body.addEventListener('touchstart', (e) => {
+        let data = {
+            xAcc: accelerometerData.x,
+            yAcc: accelerometerData.y,
+            zAcc: accelerometerData.z,
+            xGyro: gyroscopeData.x,
+            yGyro: gyroscopeData.y,
+            zGyro: gyroscopeData.z,
+        }
         interval = setInterval(function() {
-            socket.emit('motion data', `START ${accelerometerData.x} ${accelerometerData.y} ${accelerometerData.z} ${gyroscopeData.x} ${gyroscopeData.y} ${gyroscopeData.z} END`)
+            socket.emit('motion data', data)
         }, 10);
     })
 }

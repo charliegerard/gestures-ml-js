@@ -1,0 +1,36 @@
+body{
+    background: black;
+}
+
+video{
+    display: none;
+    margin: 0 auto;
+    width: 100%;
+}
+
+h1{
+    color: yellow;
+}
+
+h3{
+    font-size: 4em;
+}
+
+.intro{
+    opacity: 1;
+}
+
+.fade{
+    animation: fadeAway .5s forwards;
+    display: none;
+}
+
+@keyframes fadeAway{
+    from{
+        opacity: 1;
+    }
+
+    to{
+        opacity: 0;
+    }
+}
