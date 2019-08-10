@@ -11,12 +11,12 @@ let liveData = [];
 let predictionDone = false;
 
 let model;
-const gestureClasses = ['alohomora', 'expelliarmus'];
+const gestureClasses = ['expelliarmus', 'lumos'];
 
 app.use(express.static(__dirname + '/front-end'))
 
 io.on('connection', async function(socket){
-    model = await tf.loadLayersModel('file://model-hp/model.json');
+    model = await tf.loadLayersModel('file://model/model.json');
 
     getDaydreamData(socket);
 });
@@ -47,8 +47,8 @@ const predict = (model, newSampleData,socket) => {
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
 
         switch(winner){
-            case 'alohomora':
-                socket.emit('gesture', 'alohomora');
+            case 'lumos':
+                socket.emit('gesture', 'lumos');
                 break;
             case 'expelliarmus':
                 socket.emit('gesture', 'expelliarmus');

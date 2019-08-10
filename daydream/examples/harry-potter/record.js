@@ -12,14 +12,14 @@ process.argv.forEach(function (val, index, array) {
     gestureType = array[2];
     sampleNumber = parseInt(array[3]);
     previousSampleNumber = sampleNumber;
-    stream = fs.createWriteStream(`./data/hp/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
+    stream = fs.createWriteStream(`./data/newHP/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
     
     daydream.onStateChange(function(data){
         if(data.isClickDown){
             if(sampleNumber !== previousSampleNumber){
-                stream = fs.createWriteStream(`./data/hp/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
+                stream = fs.createWriteStream(`./data/newHP/sample_${gestureType}_${sampleNumber}.txt`, {flags:'a'});
             }
-            stream.write(`START ${data.xAcc} ${data.yAcc} ${data.zAcc} ${data.xGyro} ${data.yGyro} ${data.zGyro} END \r\n`);
+            stream.write(`${data.xAcc} ${data.yAcc} ${data.zAcc} ${data.xGyro} ${data.yGyro} ${data.zGyro}\r\n`);
 
             started = true;
         } else {

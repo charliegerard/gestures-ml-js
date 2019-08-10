@@ -16,7 +16,7 @@ const gestureClasses = ['hadoken', 'punch', 'uppercut'];
 app.use(express.static(__dirname + '/front-end'))
 
 io.on('connection', async function(socket){
-    model = await tf.loadLayersModel('file://model-game/model.json');
+    model = await tf.loadLayersModel('file://model/model.json');
     getDaydreamData(socket);
 });
 
@@ -24,7 +24,7 @@ const getDaydreamData = (socket) => {
     daydream.onStateChange(function(data){
         if(data.isClickDown){
             predictionDone = false;
-            if(liveData.length < 300){
+            if(liveData.length < 168){
                 liveData.push(data.xAcc, data.yAcc, data.zAcc, data.xGyro, data.yGyro, data.zGyro)
             }
         } else {
@@ -40,7 +40,7 @@ const getDaydreamData = (socket) => {
 const predict = (model, newSampleData, socket) => {
     tf.tidy(() => {
         const inputData = newSampleData;
-        const input = tf.tensor2d([inputData], [1, 300]);
+        const input = tf.tensor2d([inputData], [1, 168]);
         const predictOut = model.predict(input);
         const logits = Array.from(predictOut.dataSync());
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];

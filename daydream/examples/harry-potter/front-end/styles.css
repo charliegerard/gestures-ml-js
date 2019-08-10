@@ -5,6 +5,7 @@ body{
 video{
     display: none;
     margin: 0 auto;
+    width: 100%;
 }
 
 h1{
@@ -21,16 +22,15 @@ h3{
 
 .fade{
     animation: fadeAway .5s forwards;
+    display: none;
 }
 
 @keyframes fadeAway{
     from{
         opacity: 1;
-        display: block;
     }
 
     to{
         opacity: 0;
-        display: none;
     }
 }
