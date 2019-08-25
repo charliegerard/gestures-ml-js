@@ -1,9 +1,16 @@
-button{
-    user-select: none;
-    width: 50%;
-    padding: 1em;
-}
-
 body{
     user-select: none;
+    text-align: center;
+    color: white;
+    font-family: "Helvetica";
+    background: linear-gradient(to bottom,  #3d1472, #240638);
+}
+
+body.touched{
+    background: linear-gradient(to bottom,  #3d1472, #7f26bb);
+}
+
+h1{
+    font-weight: 400;
+    margin-top: 1em;
 }

@@ -1,5 +1,10 @@
 body{
     background: black;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    font-family: 'Helvetica';
+    align-content: center;
 }
 
 video{
@@ -10,6 +15,18 @@ video{
 
 h1{
     color: yellow;
+    font-weight: 400;
+}
+
+p{
+    color: white;
+}
+
+button{
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.8em;
 }
 
 h3{

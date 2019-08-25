@@ -1,3 +1,4 @@
 node_modules/
 package-lock.json
-data/
+examples/game/data/
+examples/harry-potter/data/

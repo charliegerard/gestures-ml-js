@@ -42,7 +42,6 @@ const predict = (model, newSampleData) => {
         const inputData = newSampleData;
         const input = tf.tensor2d([inputData], [1, 300]);
         const predictOut = model.predict(input);
-        const logits = Array.from(predictOut.dataSync());
         const winner = gestureClasses[predictOut.argMax(-1).dataSync()[0]];
         
         switch(winner){

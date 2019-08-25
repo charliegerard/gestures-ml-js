@@ -21,6 +21,7 @@ window.onload = function() {
     initSensors();
 
     document.body.addEventListener('touchstart', (e) => {
+        document.body.classList.add('touched');
         interval = setInterval(function() {
             socket.emit('motion data', `${accelerometerData.x} ${accelerometerData.y} ${accelerometerData.z} ${gyroscopeData.x} ${gyroscopeData.y} ${gyroscopeData.z}`)
         }, 10);
@@ -28,6 +29,7 @@ window.onload = function() {
 }
 
 document.body.addEventListener('touchend', (e) => {
+    document.body.classList.remove('touched')
     socket.emit('end motion data')
     clearInterval(interval);
 });

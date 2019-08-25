@@ -1,7 +1,6 @@
 const lineReader = require('line-reader');
 var fs = require('fs');
-const tf = require('@tensorflow/tfjs');
-require('@tensorflow/tfjs-node');
+const tf = require('@tensorflow/tfjs-node');
 
 let justFeatures = [];
 let justLabels = [];

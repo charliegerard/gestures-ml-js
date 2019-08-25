@@ -1,4 +1,3 @@
-// const socket = io.connect('http://localhost:3000', { transports: ['websocket'] });
 const socket = io();
 let interval;
 let phoneData = [];
@@ -20,6 +19,7 @@ window.onload = function() {
     initSensors();
 
     document.body.addEventListener('touchstart', (e) => {
+        document.body.classList.add('touched');
         let data = {
             xAcc: accelerometerData.x,
             yAcc: accelerometerData.y,
@@ -35,6 +35,7 @@ window.onload = function() {
 }
 
 document.body.addEventListener('touchend', (e) => {
+    document.body.classList.remove('touched');
     socket.emit('end motion data')
     clearInterval(interval);
 });
