@@ -1,13 +1,14 @@
 # Gesture recognition using hardware and Tensorflow.js
 
-Experiments building a gesture recognition system using an Arduino, a Daydream controller and a mobile phone.
+**This project is very experimental and in active development.**
+
+Experiments building a gesture recognition system using an Arduino, a Daydream controller and a mobile phone, with Tensorflow.js
 
 ## Demo:
 
 ![Demo](demo.gif)
 
-Each project has 2 demos: one to play a prototype game of street fighter, and one to predict magic wand movements.
-
+Each project has 2 demos: one to play a game of street fighter, and one to predict magic wand movements.
 
 ## How it works:
 
@@ -15,18 +16,22 @@ Using an accelerometer/gyroscope (MPU6050 for the Arduino, and built-in sensors 
 
 ## Arduino project:
 
-See `arduino-mkr1000` folder.
+See [arduino-mkr1000](arduino-mkr1000/) folder.
 
 ## Daydream project:
 
-See `daydream` folder.
+See [daydream](daydream/) folder.
 
-# Phone project:
+## Phone project:
 
-See `phone` folder.
+See [phone](phone/) folder.
+
+---
 
 
-## Article
+## Blog post
+
+Tutorial with more details on dev.to.
 
 
 
