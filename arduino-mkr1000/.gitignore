@@ -3,4 +3,5 @@ node_modules/
 .vscode/
 sketch/
 package-lock.json
-data/
+examples/game/data/
+examples/harry-potter/data/
