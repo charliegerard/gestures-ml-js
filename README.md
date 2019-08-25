@@ -2,7 +2,7 @@
 
 Experiments building a gesture recognition system using an Arduino, a Daydream controller and a mobile phone.
 
-## Goal / Demo:
+## Demo:
 
 ![Demo](demo.gif)
 
@@ -26,14 +26,6 @@ See `daydream` folder.
 See `phone` folder.
 
 
-
-
-## Phone
-
-- [x] Setup record file for phone
-- [] Front-end
-
-
 ## Article
 
 
@@ -43,17 +35,6 @@ See `phone` folder.
 
 ## To do:
 
-- [ ] Add licenses
-- [ ] Add demos in READMEs
 - [ ] Host phone demos on Codesandbox
-- [ ] Test all demos
 
   
-
-### Extra
-
-## SF
-
-- [] randomize movement enemy?
-- [] LSTM
-- [] Handle if record gesture doesn't have enough data on live prediction
