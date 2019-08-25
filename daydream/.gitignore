@@ -1,4 +1,5 @@
 node_modules/
-data/
 package-lock.json
 .DS_Store
+examples/game/data/
+examples/harry-potter/data/

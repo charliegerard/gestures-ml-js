@@ -2,22 +2,18 @@ let liveData = [];
 let predictionDone = false;
 
 let model;
-const gestureClasses = ['alohomora', 'expelliarmus'];
 
 const socket = io.connect('http://localhost:3000', { transports: ['websocket'] });
 const expelliarmusVideo = document.getElementsByClassName('expelliarmus')[0];
-const patronumVideo = document.getElementsByClassName('patronum')[0];
 const lumosVideo = document.getElementsByClassName('lumos')[0];
 
 window.onload = () => {
     expelliarmusVideo.load();
-    patronumVideo.load();
     lumosVideo.load()
 
-    document.getElementsByTagName('button')[0].onclick = () => {
-        document.getElementsByClassName('intro')[0].classList.add('fade');
-        
-    }
+    // document.getElementsByTagName('button')[0].onclick = () => {
+    //     document.getElementsByClassName('intro')[0].classList.add('fade');
+    // }
 }
 
 socket.on('gesture', function (data) {
@@ -52,8 +48,6 @@ const playVideo = (video) => {
                 expelliarmusVideo.pause();
                 lumosVideo.play();
             }
-
-            // video.play();
         })
         .catch(error => {
             console.log("error: ", error);

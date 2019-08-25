@@ -37,36 +37,6 @@ let positionY = 0;
 let hasMoved = false;
 var fps, fpsInterval, startTime, now, then, elapsed;
 
-// window.addEventListener('keydown', e => {
-//     switch(e.key){
-//         case 'p':
-//             spritePosition = 2;
-//             loop = [0, 1, 2];
-//             break;
-//         case 'ArrowLeft':
-//             positionX -= MOVEMENT_SPEED;
-//             spritePosition = 3;
-//             loop = [0, 1, 2, 3, 4];
-//             break;
-//         case 'ArrowRight':
-//             positionX += MOVEMENT_SPEED;
-//             spritePosition = 3;
-//             loop = [0, 1, 2, 3, 4];
-//             break;
-//         case 'h':
-//             spritePosition = 0;
-//             loop = [0, 1, 2, 3];
-//             break;
-//         case 'a':
-//             spritePosition = 4;
-//             loop = [0, 1, 2, 3, 4, 5, 6];
-//             break;
-//         default: 
-//             break;
-//     }
-//     hasMoved = true;
-// });
-
 class Game{
     constructor(){
         this.start = () => this.startAnimating(7);
