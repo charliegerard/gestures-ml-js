@@ -20,21 +20,20 @@ Recording, training and predicting is working and the accuracy is pretty good bu
 
 ### 1. Record data
 
-The command takes 2 arguments: a *gesture type* and a *sample number*.
+To start recording data, run the following command:
 
 ```js
-node record.js <gesture type> <sample number>
-
-//e.g node record.js punch 0
+node record.js
 ```
 
-Providing these 2 arguments will help save the data in separate files, e.g *sample_punch_0.txt*.
+In another terminal window, run `ngrok` on port 3000.
 
-After this command is run, the data will be recorded **when you hold down the trackpad** of the controller.
+Open Chrome on your phone and visit the url given by ngrok, followed by `/record`.
 
-When you release the button, all this data is saved in a `.txt` file in the `data` folder.
+When you hold down any finger on the screen, it will send data to the Node.js server via web sockets. 
+When you release, all this data is saved in a `.txt` file in the `data` folder.
 
-To record gesture of the same type, no need to re-run the above command all the time, simply press again the trackpad and execute the same gesture. When the button is released, the new data will be saved in a new file in the `data` folder.
+To record gesture of the same type, no need to re-run the above command all the time, simply hold down any fingers on the screen again and execute the same gesture. When released, the new data will be saved in a new file in the `data` folder.
 
 
 ## Train the Machine Learning algorithm
@@ -60,7 +59,11 @@ Once the model is generated, you can predict new data samples by running:
 node predict.js
 ```
 
-When this command is run, you can execute one of the gestures you trained by holding down the button, executing the gesture you want to predict, and release the button to let the model classify the new samples.
+In another terminal window, run ngrok on port 4000.
+
+Using Chrome on your phone, visit the url indicated by ngrok followed by `/predict`.
+
+When this command is run, you can execute one of the gestures you trained by holding down any finger on the screen, executing the gesture you want to predict, and release the screen to let the model classify the new samples.
 
 ---
 
@@ -69,7 +72,3 @@ When this command is run, you can execute one of the gestures you trained by hol
 * Add error handling
 * Use a LSTM algorithm for continuous prediction
 * Refactor code
-
-## To do:
-
-- [ ] Add license

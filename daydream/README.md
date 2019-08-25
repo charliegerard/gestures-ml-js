@@ -69,7 +69,3 @@ When this command is run, you can execute one of the gestures you trained by hol
 * Add error handling
 * Use a LSTM algorithm for continuous prediction
 * Refactor code
-
-## To do:
-
-- [ ] Add license

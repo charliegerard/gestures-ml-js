@@ -77,7 +77,3 @@ Once the Arduino is connected and data is streaming from the sensor, hold the bu
 * Add error handling
 * Use a LSTM algorithm for continuous prediction
 * Refactor code
-
-## To do:
-
-- [ ] Add license
