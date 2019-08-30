@@ -4,7 +4,9 @@ To use this project, you need to have Chrome on a modern phone.
 
 Using the phone's built-in accelerometer and gyroscope, as well as the Generic Sensor API, we can record data, train a machine learning algorithm and run predictions using Tensorflow.js and web sockets.
 
-## Current status:
+Feel free to try the [live demo](https://bit.ly/sf-ml)
+
+## Current status
 
 **WIP**
 

@@ -36,10 +36,3 @@ More details on dev.to in [this tutorial](https://dev.to/devdevcharlie/play-stre
 
 
 ---
-
-
-## To do:
-
-- [ ] Host phone demos on Codesandbox
-
-  
