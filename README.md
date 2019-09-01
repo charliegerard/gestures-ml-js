@@ -35,7 +35,7 @@ See [phone](phone/) folder.
 
 ## Blog post
 
-More details on dev.to in this tutorial.
+More details on in [this blog post](https://dev.to/devdevcharlie/play-street-fighter-with-body-movements-using-arduino-and-tensorflow-js-4kbi).
 
 
 
